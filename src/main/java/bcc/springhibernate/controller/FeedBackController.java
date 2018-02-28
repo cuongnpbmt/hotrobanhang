@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +33,7 @@ import bcc.springhibernate.service.NhomHangService;
 import bcc.springhibernate.service.TaikhoanService;
 
 @Controller
+@PreAuthorize("hasAnyRole('ADMIN','CHAMSOC')")
 @RequestMapping("/admin")
 public class FeedBackController {
 
@@ -124,7 +126,7 @@ public class FeedBackController {
     		feedback.setKhachhangId(khachhangId);
     		feedback.setNhavientaoId(getTaiKhoanByUserName.getNhanvien().getId());
     		feedback.setNgaytao(new Date());
-    		feedback.setTrangthai("active");
+    		//feedback.setTrangthai("active");
     		feedBackService.saveOrUpdate(feedback);
         	redirectAttributes.addFlashAttribute("msg", "Sửa Thành Công");
 		} catch (Exception e) {

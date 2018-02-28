@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,7 @@ import bcc.springhibernate.service.NhanVienService;
 import bcc.springhibernate.service.TaikhoanService;
 
 @Controller
+
 @RequestMapping("/admin")
 public class HoaDonController {
 
@@ -56,6 +58,7 @@ public class HoaDonController {
 	@Autowired
 	LuongService luongService;
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG', 'GIAOHANG')")
 	@GetMapping("/hoadon")
 	String pageDanhSachHoaDon(@RequestParam(value = "trangthai", defaultValue = "dathanhtoan") String trangthai,
 			@RequestParam(value = "limit", defaultValue = "100") Integer limit,
@@ -83,6 +86,7 @@ public class HoaDonController {
 		return "danhsachhoadon";
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG')")
 	@GetMapping("/hoadon/add")
 	String pageThemHoaDon(Model model) {
 
@@ -95,7 +99,7 @@ public class HoaDonController {
 		model.addAttribute("hoadon", new Hoadon());
 		return "themhoadon";
 	}
-
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG', 'GIAOHANG', 'TAICHINH')")
 	@GetMapping("/hoadon/{id}")
 	String pageSuaHoaDon(@PathVariable("id") Integer id, Model model) {
 
@@ -114,6 +118,8 @@ public class HoaDonController {
 		return "suahoadon";
 	}
 
+	
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG')")
 	@PostMapping("/hoadon")
 	String themHoaDon(@ModelAttribute("hoadon") Hoadon hoadon, @RequestParam("nhanvienbanhang") Integer nhanvienbanhang,
 			@RequestParam("nhanviengiaohang") Integer nhanviengiaohang,
@@ -232,6 +238,8 @@ public class HoaDonController {
 
 	}
 
+	
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG')")
 	@PatchMapping(value="/hoadon", params="update")
 	String suaHoaDon(@ModelAttribute("hoadon") Hoadon hoadon, 
 			@RequestParam("nhanvienbanhang") Integer nhanvienbanhang,
@@ -356,14 +364,19 @@ public class HoaDonController {
 		}
 	}
 
-	
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG')")
 	@PatchMapping(value="/hoadon", params="deleted")
 	String xoaVinhVienHoaDon(@ModelAttribute("hoadon") Hoadon hoadon,  RedirectAttributes redirectAttributes) {
-
+		List<Chitiethoadon> chitiethoadons = null;
 		try {
-
+			chitiethoadons = chiTietHoaDonService.findByHoadon(hoadon);
+			if(!chitiethoadons.isEmpty()) {
+				for(Chitiethoadon cthd : chitiethoadons) {
+					chiTietHoaDonService.delete(cthd);
+				}
+			}
 			hoaDonService.deleted(hoadon);
-
+			
 			redirectAttributes.addFlashAttribute("msg", "Xóa Vĩnh Viễn Thành Công");
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("msg", "Xóa Vĩnh Viễn Thất Bại");
@@ -372,7 +385,7 @@ public class HoaDonController {
 		return "redirect:/admin/hoadon?trangthai=dathanhtoan&limit=100&page=1";
 
 	}
-	
+	@PreAuthorize("hasAnyRole('ADMIN', 'BANHANG')")
 	@DeleteMapping("/hoadon")
 	String xoaHoaDon(@RequestParam(value = "trangthai", defaultValue = "dathanhtoan") String trangthai,
 			@RequestParam(value = "limit", defaultValue = "100") Integer limit,

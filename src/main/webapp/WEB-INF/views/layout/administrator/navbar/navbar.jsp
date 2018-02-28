@@ -5,7 +5,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%@ taglib prefix="security"
+	uri="http://www.springframework.org/security/tags"%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 <!-- Header Navbar -->
@@ -18,9 +19,10 @@
 	<div class="navbar-custom-menu">
 		<ul class="nav navbar-nav">
 			<!-- Messages: style can be found in dropdown.less-->
+			<security:authorize access="hasAnyRole('ADMIN')">
 			<li class="dropdown notifications-menu">
 				<!-- Menu toggle button --> <a href="#" class="dropdown-toggle"
-				data-toggle="dropdown"> <i class="fa fa-envelope-o"></i> <span
+				data-toggle="dropdown"> <i class="fa fa-bell"></i> <span
 					class="label label-success">${fn:length(listNhanVienKpi) }</span>
 			</a>
 				<ul class="dropdown-menu">
@@ -46,12 +48,14 @@
 					<!-- <li class="footer"><a href="#">See All Messages</a></li> -->
 				</ul>
 			</li>
+			</security:authorize>
 			<!-- /.messages-menu -->
 
 			<!-- Notifications Menu -->
+			<security:authorize access="hasAnyRole('ADMIN','CHAMSOC')">
 			<li class="dropdown notifications-menu">
 				<!-- Menu toggle button --> <a href="#" class="dropdown-toggle"
-				data-toggle="dropdown"> <i class="fa fa-bell-o"></i> <span
+				data-toggle="dropdown"> <i class="fa fa-group"></i> <span
 					class="label label-warning">${fn:length(listChamSoc) }</span>
 			</a>
 				<ul class="dropdown-menu">
@@ -62,8 +66,8 @@
 							<c:forEach var="cs" items="${listChamSoc }">
 								<li>
 									<!-- start notification --> <a
-									onclick="updateThongBaoChamSoc(${cs.id });"
-									href="javacript:void(0);"> <i class="fa fa-users text-aqua"></i>
+									<%-- onclick="updateThongBaoChamSoc(${cs.id });" --%>
+									href="${contextPath }/admin/chamsoctieptheo/add/${cs.id}"> <i class="fa fa-users text-aqua"></i>
 										<c:choose>
 											<c:when test="${cs.ngaycstiep == 0}">
 												<b>Hôm Nay</b> Là Lần Chăm Sóc <br>
@@ -88,10 +92,12 @@
 					<!-- <li class="footer"><a href="#">View all</a></li> -->
 				</ul>
 			</li>
+			</security:authorize>
 			<!-- Tasks Menu -->
+			<security:authorize access="hasAnyRole('ADMIN','CHAMSOC')">
 			<li class="dropdown notifications-menu">
 				<!-- Menu Toggle Button --> <a href="#" class="dropdown-toggle"
-				data-toggle="dropdown"> <i class="fa fa-flag-o"></i> <span
+				data-toggle="dropdown"> <i class="fa fa-birthday-cake"></i> <span
 					class="label label-danger">${fn:length(listKhachHang) }</span>
 			</a>
 				<ul class="dropdown-menu">
@@ -128,6 +134,7 @@
 					<!-- <li class="footer"><a href="#">View all tasks</a></li> -->
 				</ul>
 			</li>
+			</security:authorize>
 			<!-- User Account Menu -->
 			<li class="dropdown user user-menu">
 				<!-- Menu Toggle Button --> <a href="#" class="dropdown-toggle"

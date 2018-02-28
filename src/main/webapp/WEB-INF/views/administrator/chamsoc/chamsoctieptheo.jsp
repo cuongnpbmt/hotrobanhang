@@ -37,13 +37,14 @@ tr:nth-child(even) {
 			<!-- general form elements -->
 			<div class="box box-primary">
 				<div class="box-header with-border">
-					<h3 class="box-title">Thêm Chăm Sóc</h3>
+					<h3 class="box-title">Chăm Sóc Tiếp Theo</h3>
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
 				<form:form role="form" id="formChamSoc"
-					action="${contextPath }/admin/chamsoc" method="post"
+					action="${contextPath }/admin/chamsoctieptheo" method="post"
 					modelAttribute="chamsoc">
+					
 					<form:hidden path="id" />
 					<div class="box-body">
 
@@ -51,10 +52,10 @@ tr:nth-child(even) {
 							<label>Nhân Viên Bán Hàng</label> <select
 								class="form-control select2" name="nhanvienbanhang"
 								style="width: 100%;">
-								<option value="0" selected="selected">Không</option>
+
 								<c:forEach var="nv" items="${listNhanvien }">
-									<option value="${nv.id }">${nv.manhanvien}-
-										${nv.tennhanvien }</option>
+									<option ${chamsoc.nhanvienbanhang == nv.id ? 'selected' : '' }
+										value="${nv.id }">${nv.manhanvien}-${nv.tennhanvien }</option>
 								</c:forEach>
 
 							</select>
@@ -63,10 +64,10 @@ tr:nth-child(even) {
 							<label>Nhân Viên Giao Hàng</label> <select
 								class="form-control select2" name="nhanviengiaohang"
 								style="width: 100%;">
-								<option value="0" selected="selected">Không</option>
+
 								<c:forEach var="nv" items="${listNhanvien }">
-									<option value="${nv.id }">${nv.manhanvien}-
-										${nv.tennhanvien }</option>
+									<option ${chamsoc.nhanviengiaohang == nv.id ? 'selected' : '' }
+										value="${nv.id }">${nv.manhanvien}-${nv.tennhanvien }</option>
 								</c:forEach>
 
 							</select>
@@ -74,11 +75,10 @@ tr:nth-child(even) {
 						<div class="form-group">
 							<label>Khách Hàng</label> <select class="form-control select2"
 								id="khachhang" name="khachhang" style="width: 100%;">
-	
+
 								<c:forEach var="kh" items="${listKhachhang }">
-									<option
-									${kh.id == param.khachhang ? 'selected' : '' }
-									 value="${kh.id }">${kh.makh}-${kh.ten }</option>
+									<option ${chamsoc.khachhang.id == kh.id ? 'selected' : '' }
+										value="${kh.id }">${kh.makh}-${kh.ten }</option>
 								</c:forEach>
 
 							</select>
@@ -88,9 +88,10 @@ tr:nth-child(even) {
 						<div class="form-group">
 							<label>Hóa Đơn</label> <select class="form-control select2" id="hoadon"
 								name="hoadon" style="width: 100%;">
-								<option value="0" selected="selected">Không</option>
+								<option value="0" ${chamsoc.hoadonId == '0' ? 'selected' : '' }>Không</option>
 								<c:forEach var="hd" items="${listHoadon }">
-									<option value="${hd.id }">${hd.sohoadon}</option>
+									<option ${chamsoc.hoadonId == hd.id ? 'selected' : '' }
+										value="${hd.id }">${hd.sohoadon}</option>
 								</c:forEach>
 
 							</select>
@@ -126,7 +127,7 @@ tr:nth-child(even) {
 							<label id="_diem-error" class="error" style="display: none;"></label>
 						</div>
 						<div class="box-body table-responsive">
-						 
+						
 							<table border="1" style="overflow-x: auto;" id="tblctcs">
 								<thead>
 									<tr>
@@ -138,7 +139,7 @@ tr:nth-child(even) {
 									</tr>
 								</thead>
 								<tbody>
-
+									
 								</tbody>
 								<tfoot>
 									<tr>
@@ -150,8 +151,11 @@ tr:nth-child(even) {
 									</tr>
 								</tfoot>
 							</table>
-							
+						
 						</div>
+
+
+
 
 
 						<div class="form-group">
@@ -161,24 +165,22 @@ tr:nth-child(even) {
 								<div class="input-group-addon">
 									<i class="fa fa-calendar"></i>
 								</div>
-								<input name="ngay" id="ngay"
-									value="<fmt:formatDate
-                                                pattern="dd-MM-yyyy" value="${chamsoc.ngay}"/>"
+								<input name="ngay"
+									value="<fmt:formatDate pattern="dd-MM-yyyy" value="${chamsoc.ngay}"/>"
 									type="text" class="form-control"
 									data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="">
 							</div>
 							<label id="ngay-error" class="error" for="ngay"></label>
 						</div>
 						<div class="form-group">
-							<label  style="margin-right: 60px;">Số
-								Lần Đã Chăm Sóc : <span id="spsolanchamsoc">${solanchamsoc }</span>
-							</label> <label>Số Lần Đã Đàm Phán : <span id="spsolandamphan">${solandamphan }</span></label>
+							<label style="margin-right: 60px;">Số Lần Đã Chăm Sóc : <span
+								id="spsolanchamsoc">${chamsoc.khachhang.solanchamsoc }</span>
+							</label> <label>Số Lần Đã Đàm Phán : <span id="spsolandamphan">${chamsoc.khachhang.solandamphan }</span></label>
 
 						</div>
 						<div class="form-group">
 							<label for="lan">Lần Chăm Sóc</label>
 							<form:input path="lan" type="number" class="form-control" min="0"
-								value="${solanchamsoc + solandamphan + 1}"
 								placeholder="Lần Chăm Sóc" />
 
 						</div>
@@ -196,9 +198,8 @@ tr:nth-child(even) {
 								<div class="input-group-addon">
 									<i class="fa fa-calendar"></i>
 								</div>
-								<input name="ngaycstiep" id="ngaycstiep"
-									value="<fmt:formatDate
-                                                pattern="dd-MM-yyyy" value="${chamsoc.ngaycstiep}"/>"
+								<input name="ngaycstiep"
+									value="<fmt:formatDate pattern="dd-MM-yyyy" value="${chamsoc.ngaycstiep}"/>"
 									type="text" class="form-control"
 									data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="">
 							</div>
@@ -226,8 +227,19 @@ tr:nth-child(even) {
 					<input type="hidden" name="${_csrf.parameterName}"
 						value="${_csrf.token}" />
 					<div class="box-footer">
-						<button id="btn-submit" type="submit" class="btn btn-primary">Xác
-							Nhận</button>
+						<c:if test="${chamsoc.trangthai != 'deleted' }">
+							<div class="box-footer">
+								<button id="btn-submit" name="update" type="submit"
+									class="btn btn-primary">Xác Nhận</button>
+							</div>
+						</c:if>
+						<c:if test="${chamsoc.trangthai == 'deleted' }">
+							<div class="box-footer">
+
+								<button id="btn-submit" name="deleted" type="submit"
+									class="btn btn-danger">Xóa Vĩnh Viễn</button>
+							</div>
+						</c:if>
 					</div>
 				</form:form>
 			</div>

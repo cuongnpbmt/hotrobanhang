@@ -4,6 +4,7 @@ package bcc.springhibernate.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +23,7 @@ import bcc.springhibernate.service.NhomHangService;
 import bcc.springhibernate.service.QuyenService;
 
 @Controller
+@PreAuthorize("hasAnyRole('ADMIN')")
 @RequestMapping("/admin")
 public class QuyenController {
 
@@ -69,7 +71,7 @@ public class QuyenController {
     String suaQuyen(@ModelAttribute("quyen") Quyen quyen,
     		RedirectAttributes redirectAttributes) {
     	try {
-    		quyen.setTrangthai("active");
+    		//quyen.setTrangthai("active");
         	quyenService.saveOrUpdate(quyen);
         	redirectAttributes.addFlashAttribute("msg", "Sửa Thành Công");
 		} catch (Exception e) {

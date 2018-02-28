@@ -30,7 +30,7 @@ import javax.servlet.ServletContext;
 @Configuration
 //Đẽ kích hoạt việc tích hợp Spring Security với Spring MVC
 @EnableWebSecurity
-
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	/*
      * Object principal =
@@ -88,7 +88,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
     	http
         .authorizeRequests()
            
-            .antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/admin/**").hasAnyRole("ADMIN","CHAMSOC","BANHANG","GIAOHANG","TAICHINH")
             .antMatchers("/login").permitAll()
             .and()
         .formLogin()
